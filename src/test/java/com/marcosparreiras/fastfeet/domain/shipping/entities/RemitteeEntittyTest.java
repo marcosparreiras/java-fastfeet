@@ -1,10 +1,9 @@
-package com.marcosparreiras.fastfeet.domain.shipping;
+package com.marcosparreiras.fastfeet.domain.shipping.entities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.marcosparreiras.fastfeet.domain.common.UniqueEntityId;
-import com.marcosparreiras.fastfeet.domain.shipping.entities.RemitteeEntity;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,18 +1,19 @@
 package com.marcosparreiras.fastfeet.domain.shipping.entities;
 
 import com.marcosparreiras.fastfeet.domain.common.UniqueEntityId;
+import com.marcosparreiras.fastfeet.domain.shipping.valueObjetcts.Password;
 import java.time.LocalDate;
 
 public class DeliveryManEntity extends APersonEntity {
 
-  private String password;
+  private Password password;
   private boolean isAdmin;
 
-  public String getPassword() {
+  public Password getPassword() {
     return this.password;
   }
 
-  public void setPassword(String password) {
+  public void setPassword(Password password) {
     this.touch();
     this.password = password;
   }
@@ -32,7 +33,7 @@ public class DeliveryManEntity extends APersonEntity {
     String name,
     LocalDate createdAt,
     LocalDate updatedAt,
-    String password,
+    Password password,
     boolean isAdmin
   ) {
     super(id, cpf, name, createdAt, updatedAt);
@@ -43,7 +44,7 @@ public class DeliveryManEntity extends APersonEntity {
   public static DeliveryManEntity create(
     String cpf,
     String name,
-    String password
+    Password password
   ) {
     UniqueEntityId id = new UniqueEntityId();
     LocalDate createdAt = LocalDate.now();
@@ -66,7 +67,7 @@ public class DeliveryManEntity extends APersonEntity {
     String name,
     LocalDate createdAt,
     LocalDate updatedAt,
-    String password,
+    Password password,
     boolean isAdmin
   ) {
     return new DeliveryManEntity(
