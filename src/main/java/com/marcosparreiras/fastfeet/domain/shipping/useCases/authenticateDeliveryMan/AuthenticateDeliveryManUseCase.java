@@ -24,7 +24,7 @@ public class AuthenticateDeliveryManUseCase {
       this.deliveryManRepository.findByCpf(cpf)
         .orElseThrow(InvalidCredentialsException::new);
 
-    boolean passwordMatch = deliveryMan.getPassword().compare(plainPassword);
+    boolean passwordMatch = deliveryMan.validatePassword(plainPassword);
     if (!passwordMatch) {
       throw new InvalidCredentialsException();
     }

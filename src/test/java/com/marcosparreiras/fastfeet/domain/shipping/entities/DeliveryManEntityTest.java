@@ -30,7 +30,7 @@ public class DeliveryManEntityTest {
 
     assertThat(deliveryMan.getName()).isEqualTo(name);
     assertThat(deliveryMan.getCpf()).isEqualTo(cpf);
-    assertTrue(deliveryMan.getPassword().compare(plainPassword));
+    assertTrue(deliveryMan.validatePassword(plainPassword));
     assertThat(deliveryMan.getIsAdmin()).isEqualTo(false);
 
     assertThat(deliveryMan.getId()).isNotNull();
@@ -70,7 +70,7 @@ public class DeliveryManEntityTest {
     assertThat(deliveryMan.getCpf()).isEqualTo(cpf);
     assertThat(deliveryMan.getCreatedAt()).isEqualTo(createdAt);
     assertThat(deliveryMan.getUpdatedAt()).isNull();
-    assertThat(deliveryMan.getPassword().compare(plainPassword));
+    assertThat(deliveryMan.validatePassword(plainPassword));
     assertThat(deliveryMan.getIsAdmin()).isEqualTo(isAdmin);
 
     deliveryMan.setPassword(new Password(fakePasswordEncoder, "654321"));

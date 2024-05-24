@@ -9,8 +9,8 @@ public class DeliveryManEntity extends APersonEntity {
   private Password password;
   private boolean isAdmin;
 
-  public Password getPassword() {
-    return this.password;
+  public boolean validatePassword(String plainPassword) {
+    return this.password.compare(plainPassword);
   }
 
   public void setPassword(Password password) {
