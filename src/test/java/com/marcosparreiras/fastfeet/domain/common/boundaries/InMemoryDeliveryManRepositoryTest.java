@@ -34,7 +34,12 @@ public class InMemoryDeliveryManRepositoryTest
 
   @Override
   public void save(DeliveryManEntity deliveryManEntity) {
-    this.items.add(deliveryManEntity);
+    int index = this.items.indexOf(deliveryManEntity);
+    if (index < 0) {
+      this.items.add(deliveryManEntity);
+      return;
+    }
+    this.items.set(index, deliveryManEntity);
   }
 
   @Override
