@@ -60,4 +60,10 @@ public class InMemoryDeliveryManRepositoryTest
     }
     return deliveryMenOrderByCreatedAtDesc.subList(startIndex, endIndex);
   }
+
+  @Override
+  public void delete(DeliveryManEntity deliveryManEntity) {
+    int index = this.items.indexOf(deliveryManEntity);
+    this.items.remove(index);
+  }
 }

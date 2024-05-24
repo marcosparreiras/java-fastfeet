@@ -11,5 +11,7 @@ public interface DeliveryManRepository {
 
   public void save(DeliveryManEntity deliveryManEntity);
 
+  public void delete(DeliveryManEntity deliveryManEntity);
+
   public List<DeliveryManEntity> findMany(int page);
 }
