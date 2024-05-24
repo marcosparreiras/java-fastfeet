@@ -28,4 +28,9 @@ public class InMemoryDeliveryManRepositoryTest
       this.items.stream().filter(item -> item.getCpf() == cpf).findFirst();
     return deliveryManOptional;
   }
+
+  @Override
+  public void save(DeliveryManEntity deliveryManEntity) {
+    this.items.add(deliveryManEntity);
+  }
 }

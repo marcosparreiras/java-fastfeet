@@ -7,4 +7,6 @@ public interface DeliveryManRepository {
   public Optional<DeliveryManEntity> findById(String id);
 
   public Optional<DeliveryManEntity> findByCpf(String cpf);
+
+  public void save(DeliveryManEntity deliveryManEntity);
 }

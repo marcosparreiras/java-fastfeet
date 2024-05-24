@@ -15,19 +15,19 @@ public class AuthenticateDeliveryManUseCase {
   }
 
   public AuthenticateDeliveryManUseCaseResponse execute(
-    AuthenticateDeliveryManUseCaseRequest authenticateDeliveryManUseCaseRequest
+    AuthenticateDeliveryManUseCaseRequest request
   ) throws InvalidCredentialsException {
-    String cpf = authenticateDeliveryManUseCaseRequest.cpf();
-    String plainPassword = authenticateDeliveryManUseCaseRequest.plainPassword();
-
     DeliveryManEntity deliveryMan =
-      this.deliveryManRepository.findByCpf(cpf)
+      this.deliveryManRepository.findByCpf(request.cpf())
         .orElseThrow(InvalidCredentialsException::new);
 
-    boolean passwordMatch = deliveryMan.validatePassword(plainPassword);
+    boolean passwordMatch = deliveryMan.validatePassword(
+      request.plainPassword()
+    );
     if (!passwordMatch) {
       throw new InvalidCredentialsException();
     }
+
     return new AuthenticateDeliveryManUseCaseResponse(deliveryMan);
   }
 }
