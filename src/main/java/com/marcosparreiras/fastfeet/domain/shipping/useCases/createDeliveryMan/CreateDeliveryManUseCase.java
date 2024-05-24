@@ -3,7 +3,9 @@ package com.marcosparreiras.fastfeet.domain.shipping.useCases.createDeliveryMan;
 import com.marcosparreiras.fastfeet.domain.common.boundaries.DeliveryManRepository;
 import com.marcosparreiras.fastfeet.domain.common.boundaries.PasswordEncoder;
 import com.marcosparreiras.fastfeet.domain.common.exceptions.DeliveryManAlreadyExistsException;
+import com.marcosparreiras.fastfeet.domain.common.exceptions.UnauthorizedException;
 import com.marcosparreiras.fastfeet.domain.shipping.entities.DeliveryManEntity;
+import com.marcosparreiras.fastfeet.domain.shipping.useCases.utils.AssertDeliveryManIsAdmin;
 import com.marcosparreiras.fastfeet.domain.shipping.valueObjetcts.Password;
 import java.util.Optional;
 
@@ -22,7 +24,9 @@ public class CreateDeliveryManUseCase {
 
   public CreateDeliveryManUseCaseResponse execute(
     CreateDeliveryManUseCaseRequest request
-  ) throws DeliveryManAlreadyExistsException {
+  ) throws DeliveryManAlreadyExistsException, UnauthorizedException {
+    AssertDeliveryManIsAdmin.execute(request.adminId(), deliveryManRepository);
+
     Optional<DeliveryManEntity> deliveryManExists =
       this.deliveryManRepository.findByCpf(request.cpf());
     if (deliveryManExists.isPresent()) {

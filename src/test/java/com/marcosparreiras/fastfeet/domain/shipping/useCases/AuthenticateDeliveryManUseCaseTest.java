@@ -4,15 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.marcosparreiras.fastfeet.domain.common.boundaries.FakePasswordEncoder;
 import com.marcosparreiras.fastfeet.domain.common.boundaries.InMemoryDeliveryManRepositoryTest;
-import com.marcosparreiras.fastfeet.domain.common.boundaries.PasswordEncoder;
 import com.marcosparreiras.fastfeet.domain.common.exceptions.InvalidCredentialsException;
 import com.marcosparreiras.fastfeet.domain.shipping.entities.DeliveryManEntity;
+import com.marcosparreiras.fastfeet.domain.shipping.entities.FakeDeliveryManFactoryTest;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.authenticateDeliveryMan.AuthenticateDeliveryManUseCase;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.authenticateDeliveryMan.AuthenticateDeliveryManUseCaseRequest;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.authenticateDeliveryMan.AuthenticateDeliveryManUseCaseResponse;
-import com.marcosparreiras.fastfeet.domain.shipping.valueObjetcts.Password;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,19 +19,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthenticateDeliveryManUseCaseTest {
 
   private InMemoryDeliveryManRepositoryTest deliveryManRepository;
-  private DeliveryManEntity deliveryMan;
   private AuthenticateDeliveryManUseCase useCase;
-  private String cpf = "00000000000";
-  private String name = "John Doe";
+
   private String plainPassword = "123456";
+  private DeliveryManEntity deliveryMan = FakeDeliveryManFactoryTest.createWithPassowrd(
+    plainPassword
+  );
 
   @BeforeEach
   void beforeEach() {
     deliveryManRepository = new InMemoryDeliveryManRepositoryTest();
     useCase = new AuthenticateDeliveryManUseCase(deliveryManRepository);
-    PasswordEncoder passwordEncoder = new FakePasswordEncoder();
-    Password password = new Password(passwordEncoder, this.plainPassword);
-    deliveryMan = DeliveryManEntity.create(this.cpf, this.name, password);
     deliveryManRepository.items.add(deliveryMan);
   }
 
@@ -41,11 +37,12 @@ public class AuthenticateDeliveryManUseCaseTest {
   void shouldBeAbleToAuthenticateADeliveryManWithCorrectCredentials() {
     try {
       AuthenticateDeliveryManUseCaseRequest request = new AuthenticateDeliveryManUseCaseRequest(
-        this.cpf,
-        this.plainPassword
+        deliveryMan.getCpf(),
+        plainPassword
       );
-      AuthenticateDeliveryManUseCaseResponse response =
-        this.useCase.execute(request);
+      AuthenticateDeliveryManUseCaseResponse response = useCase.execute(
+        request
+      );
       DeliveryManEntity deliveryManEntity = response.deliveryManEntity();
       assertTrue(deliveryManEntity.getId().equal(deliveryManEntity.getId()));
     } catch (Exception e) {
@@ -57,8 +54,8 @@ public class AuthenticateDeliveryManUseCaseTest {
   void shouldNotBeAbleToAuthenticateDeliveryManWithIncorrectPassword() {
     try {
       AuthenticateDeliveryManUseCaseRequest request = new AuthenticateDeliveryManUseCaseRequest(
-        this.cpf,
-        this.plainPassword.concat("54")
+        deliveryMan.getCpf(),
+        plainPassword.concat("54")
       );
       this.useCase.execute(request);
       fail("Should not authenticate delivery man with incorrect credentials");
@@ -71,10 +68,10 @@ public class AuthenticateDeliveryManUseCaseTest {
   void shouldNotBeAbleToAuthenticateDeliveryManWithUnexistentCpf() {
     try {
       AuthenticateDeliveryManUseCaseRequest request = new AuthenticateDeliveryManUseCaseRequest(
-        this.cpf.substring(2).concat("54"),
-        this.plainPassword
+        deliveryMan.getCpf().substring(2).concat("54"),
+        plainPassword
       );
-      this.useCase.execute(request);
+      useCase.execute(request);
       fail("Should not authenticate delivery man with incorrect credentials");
     } catch (Exception e) {
       assertThat(e).isInstanceOf(InvalidCredentialsException.class);

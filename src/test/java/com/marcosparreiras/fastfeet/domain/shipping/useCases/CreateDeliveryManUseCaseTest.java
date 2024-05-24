@@ -7,7 +7,9 @@ import com.marcosparreiras.fastfeet.domain.common.boundaries.FakePasswordEncoder
 import com.marcosparreiras.fastfeet.domain.common.boundaries.InMemoryDeliveryManRepositoryTest;
 import com.marcosparreiras.fastfeet.domain.common.boundaries.PasswordEncoder;
 import com.marcosparreiras.fastfeet.domain.common.exceptions.DeliveryManAlreadyExistsException;
+import com.marcosparreiras.fastfeet.domain.common.exceptions.UnauthorizedException;
 import com.marcosparreiras.fastfeet.domain.shipping.entities.DeliveryManEntity;
+import com.marcosparreiras.fastfeet.domain.shipping.entities.FakeDeliveryManFactoryTest;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.createDeliveryMan.CreateDeliveryManUseCase;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.createDeliveryMan.CreateDeliveryManUseCaseRequest;
 import com.marcosparreiras.fastfeet.domain.shipping.useCases.createDeliveryMan.CreateDeliveryManUseCaseResponse;
@@ -23,6 +25,8 @@ public class CreateDeliveryManUseCaseTest {
   private InMemoryDeliveryManRepositoryTest deliveryManRepository;
   private PasswordEncoder passwordEncoder;
   private CreateDeliveryManUseCase useCase;
+  private DeliveryManEntity admin = FakeDeliveryManFactoryTest.createAdmin();
+  private DeliveryManEntity deliveryMan = FakeDeliveryManFactoryTest.create();
 
   @BeforeEach
   void beforeEach() {
@@ -30,10 +34,13 @@ public class CreateDeliveryManUseCaseTest {
     passwordEncoder = new FakePasswordEncoder();
     useCase =
       new CreateDeliveryManUseCase(deliveryManRepository, passwordEncoder);
+
+    deliveryManRepository.items.add(admin);
+    deliveryManRepository.items.add(deliveryMan);
   }
 
   @Test
-  void shouldBeAbleToCreateANewDeliveryMan() {
+  void nonAdminShoulNotBeAbleToCreateANewDeliveryMan() {
     try {
       String name = "John Doe";
       String cpf = "00000000000";
@@ -42,7 +49,28 @@ public class CreateDeliveryManUseCaseTest {
       CreateDeliveryManUseCaseRequest request = new CreateDeliveryManUseCaseRequest(
         cpf,
         name,
-        password
+        password,
+        deliveryMan.getId().getValue().toString()
+      );
+      this.useCase.execute(request);
+      fail("Only admin should be able to create a new delivery man");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(UnauthorizedException.class);
+    }
+  }
+
+  @Test
+  void anAdminShouldBeAbleToCreateANewDeliveryMan() {
+    try {
+      String name = "John Doe";
+      String cpf = "00000000000";
+      String password = "123456";
+
+      CreateDeliveryManUseCaseRequest request = new CreateDeliveryManUseCaseRequest(
+        cpf,
+        name,
+        password,
+        admin.getId().getValue().toString()
       );
       CreateDeliveryManUseCaseResponse response = this.useCase.execute(request);
       assertThat(response.deliveryMan().getId().getValue())
@@ -74,7 +102,8 @@ public class CreateDeliveryManUseCaseTest {
       CreateDeliveryManUseCaseRequest request = new CreateDeliveryManUseCaseRequest(
         cpf,
         name,
-        password
+        password,
+        admin.getId().getValue().toString()
       );
       this.useCase.execute(request);
       fail("Should not be able to create a delivery man with duplicated cpf");
