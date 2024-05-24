@@ -12,6 +12,10 @@ public class Password {
     this.value = encoder.hash(plain);
   }
 
+  public static Password load(PasswordEncoder encoder, String value) {
+    return new Password(encoder, value);
+  }
+
   public String getValue() {
     return this.value;
   }
